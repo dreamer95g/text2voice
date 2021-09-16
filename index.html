@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text 2 Voice
+  </title>
+  <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+  <!-- ESTILO DEL SPINKIT -->
+  <style type="text/css">
+    .sk-three-bounce {
+      margin: 40px auto;
+      width: 80px;
+      text-align: center;
+    }
+
+    .sk-three-bounce .sk-child {
+      width: 20px;
+      height: 20px;
+      background-color: #1bc5ac;
+      border-radius: 100%;
+      display: inline-block;
+      -webkit-animation: sk-three-bounce 1.4s ease-in-out 0s infinite both;
+      animation: sk-three-bounce 1.4s ease-in-out 0s infinite both;
+    }
+
+    .sk-three-bounce .sk-bounce1 {
+      -webkit-animation-delay: -0.32s;
+      animation-delay: -0.32s;
+    }
+
+    .sk-three-bounce .sk-bounce2 {
+      -webkit-animation-delay: -0.16s;
+      animation-delay: -0.16s;
+    }
+
+    @-webkit-keyframes sk-three-bounce {
+
+      0%,
+      80%,
+      100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+      }
+
+      40% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+      }
+    }
+
+    @keyframes sk-three-bounce {
+
+      0%,
+      80%,
+      100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+      }
+
+      40% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <br>
+  <br>
+
+  <div id="main" class="container">
+
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <h3 align="center">Convert from text to voice</h3>
+      <h4 align="center">.ogg audio file output</h4>
+
+      <br>
+
+      <form role="form" v-if="!loading">
+        <div class="form-group">
+          <label>Text:</label>
+          <textarea rows="12" v-model="recipe.text" type="text" class="form-control"></textarea>
+        </div>
+        <br>
+        <div class="col-md-10">
+          <div class="form-group">
+            <label>Output dir:</label>
+            <input v-model="recipe.output" type="text" class="form-control"></input>
+            <label> Ex: C:\Users\gabry\Desktop\ogg</label>
+
+
+          </div>
+          <br>
+
+          <span class="btn btn-primary" @click="validate()" v-if="!loading">Convert</span>
+        </div>
+
+      </form>
+
+      </form>
+
+
+      <div v-if="loading">
+        <div class="sk-three-bounce" id="loading">
+          <div class="sk-child sk-bounce1"></div>
+          <div class="sk-child sk-bounce2"></div>
+          <div class="sk-child sk-bounce3"></div>
+        </div>
+        <br>
+
+      </div>
+
+    </div>
+  </div>
+  <!-- IMPORTAR LAS LIBRERIAS NECESARIAS -->
+  <script src="vue.js"></script>
+  <script src="jquery.min.js"></script>
+  <script src="axios.min.js"></script>
+
+  <script type="text/javascript">
+    new Vue({
+      el: '#main',
+
+      data: {
+        recipe: {
+          text: "",
+          output: "C:\\Users\\gabry\\Desktop\\ogg"
+        },
+        loading: false
+      },
+
+      methods: {
+
+        // VALIDAR LOS CAMPOS
+        validate: function () {
+
+          if (this.recipe.text !== "" && this.recipe.output !== "") {
+            this.convert(this.source);
+          } else {
+
+            alert(" Fill the inputs ");
+
+          }
+        },
+
+        // CONVERTIR
+        convert: function () {
+          this.loading = true;
+          axios.post('http://localhost/text2voice/main.php', this.createdFormData()).then((response) => {
+            this.loading = false;
+            //this.recipe.output = "";
+            //this.recipe.text = "";
+            alert(response.data);
+          })
+        },
+        // PARA PODER OBTENERLOS EN PHP
+        createdFormData: function () {
+          var formDa = new FormData();
+          for (var key in this.recipe) {
+            formDa.append(key, this.recipe[key]);
+          }
+          return formDa;
+        },
+      }
+    });
+  </script>
+</body>
+
+</html>
